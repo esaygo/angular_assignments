@@ -1,0 +1,60 @@
+<html ng-app='myApp'>
+    <head>
+      <title>Angular Directives</title>
+      <script src='https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js'></script>
+      <script type='text/javascript'>
+      // Create a module
+        var myAppModule = angular.module('myApp', []);
+        // Create a factory (attached to this module)
+        myAppModule.factory('foodFactory', function (){
+
+          // The factory is nothing more than a function that returns an object
+          var foods = ['Pizza', 'Fries', 'Salad'];
+          var factory = {};
+          // Add a getStudents key to the factory object with a value of a function.
+          factory.getFoods = function (callback){
+              // Pass the students to a callback to be used by whoever calls the method
+              callback(foods);
+          }
+          // Most important step: return the object so it can be used by the rest of our angular code
+          return factory;
+        });
+        // Create a controller (attached to this module), and inject the studentFactory in it.
+        myAppModule.controller('foodsController', function ($scope, foodFactory){
+          console.log($scope);
+          //  initialize an empty array so $scope.students maintains a consistent data type
+          $scope.foods = [];
+          // run the getStudents method and set $scope data in the callback
+          foodFactory.getFoods(function (data){
+              $scope.foods = data;
+          });
+          $scope.addFood = function() {
+            $scope.foods.push($scope.newFood);
+            $scope.newFood = "";
+          }
+        });
+      </script>
+    </head>
+    <body>
+      <div ng-controller="foodsController">
+        <h1>Do you like food ?</h1>
+        <input type="checkbox" ng-model="survey" ng-init="checked">
+        <div ng-if="survey">
+          <p>Welcome, this site is right for you! :)</p>
+        </div>
+          <h3>Add a new food</h3>
+          <form>
+            Favorite food: <input type='text' ng-model='newFood' placeholder="new fav food">
+            <input type='submit' value="add new food" ng-click='addFood()'>
+          </form>
+          <p>Currently typing: <span ng-bind="newFood"></span></p>
+
+          <div id="search">
+            Search Foods: <input type="text" ng-model="filter_food" placeholder="search">
+          </div>
+          <ul>
+              <li ng-repeat="food in foods | filter: filter_food " ng-bind="food"></li>
+          </ul>
+      </div>
+    </body>
+</html>
