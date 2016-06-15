@@ -1,6 +1,6 @@
 <html ng-app='myApp'>
     <head>
-      <title>Angular Products with Factory</title>
+      <title>Angular Products and Quatities</title>
       <script src='https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js'></script>
 
       <script type='text/javascript'>
@@ -12,17 +12,17 @@
 
           // The factory is nothing more than a function that returns an object
           var products = [
-                    { name: 'mouse',
-                     price:  59.99
-                    },
-                    { name: 'pad',
-                     price:  29.99
-                    },
                     { name: 'keyboard',
-                     price:  149.99
+                     price: 149.99,
+                     quantity: 50
+                    },
+                    { name: 'mouse',
+                     price: 59.99,
+                     quantity: 50
                     },
                     { name: 'ball',
-                    price:   59.99
+                    price:  59.99,
+                    quantity: 50
                     }
                  ];
           var factory = {};
@@ -37,25 +37,43 @@
         // Create a controller (attached to this module), and inject the studentFactory in it.
         myAppModule.controller('productsController', function ($scope, productFactory){
           console.log($scope);
-          //  initialize an empty array so $scope.students maintains a consistent data type
+          //  initialize an empty array so $scope.products maintains a consistent data type
           $scope.products = [];
-          // run the getStudents method and set $scope data in the callback
+          // run the getProducts method and set $scope data in the callback
           productFactory.getProducts(function (data){
               $scope.products = data;
           });
           $scope.addProduct = function() {
+            console.log('new added product', $scope.newProduct);
             $scope.products.push($scope.newProduct);
             $scope.newProduct = {};
           }
           $scope.deleteProduct = function(product) {
-            //console.log("product to delete is: ", product);
+            console.log("product to delete is: ", product);
             $scope.products.splice($scope.products.indexOf(product), 1);
           }
-          $scope.orderByPrice = function(product) {
-            //console.log(typeof(product.price));
-            return parseInt(product.price);
-          }
         });
+
+        myAppModule.controller('ordersController', function ($scope, productFactory){
+          console.log("scope in orders controller", $scope);
+
+          //$scope.products = [];
+          productFactory.getProducts(function (data){
+              $scope.products = data;
+          });
+
+          //console.log("products in orders controller", $scope.products);
+          $scope.buyProduct = function(product) {
+            index = $scope.products.indexOf(product);
+            //console.log("product to buy", $scope.products[index].quantity);
+            if($scope.products[index].quantity > 0) {
+                $scope.products[index].quantity -= 1;
+              }
+            return $scope.products[index].quantity;
+          }
+
+        });
+
       </script>
     </head>
     <body>
@@ -64,6 +82,7 @@
           <form>
             Name: <input type='text' ng-model='newProduct.name' placeholder="name">
             Price: <input type='text' ng-model='newProduct.price' placeholder="price">
+                   <input type='text' style="display: none;" ng-model='newProduct.quantity' value="50">
             <input type='submit' value="Add Product" ng-click='addProduct()'>
           </form>
           <table border=1>
@@ -75,11 +94,34 @@
               </tr>
             </thead>
             <tbody>
-              <tr ng-repeat="product in products | orderBy : 'price' ">
+              <tr ng-repeat="product in products | orderBy : '-price' ">
                 <td ng-bind="product.name"></td>
                 <td ng-bind="'$' + (product.price)"></td>
                 <!-- <td>{{'$' + product.price}}</td> -->
                 <td><button ng-click='deleteProduct(product)'>Delete Product</button></td>
+              </tr>
+            <tbody>
+          </table>
+      </div>
+      <div ng-controller="ordersController">
+        <hr>
+        <h1>Orders Controller</h1>
+          <table border=1>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Quatity available</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="product in products | orderBy : '-price' ">
+                <td ng-bind="product.name"></td>
+                <td ng-bind="'$' + (product.price)"></td>
+                <td ng-bind="product.quantity"></td>
+                <!-- <td>{{'$' + product.price}}</td> -->
+                <td><button ng-click='buyProduct(product)'>Buy</button></td>
               </tr>
             <tbody>
           </table>
