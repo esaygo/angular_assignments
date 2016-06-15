@@ -45,6 +45,8 @@
           });
           $scope.addProduct = function() {
             console.log('new added product', $scope.newProduct);
+            console.log($scope.products);
+            $scope.newProduct.quantity = 50;
             $scope.products.push($scope.newProduct);
             $scope.newProduct = {};
           }
@@ -82,7 +84,6 @@
           <form>
             Name: <input type='text' ng-model='newProduct.name' placeholder="name">
             Price: <input type='text' ng-model='newProduct.price' placeholder="price">
-                   <input type='text' style="display: none;" ng-model='newProduct.quantity' value="50">
             <input type='submit' value="Add Product" ng-click='addProduct()'>
           </form>
           <table border=1>
@@ -120,7 +121,6 @@
                 <td ng-bind="product.name"></td>
                 <td ng-bind="'$' + (product.price)"></td>
                 <td ng-bind="product.quantity"></td>
-                <!-- <td>{{'$' + product.price}}</td> -->
                 <td><button ng-click='buyProduct(product)'>Buy</button></td>
               </tr>
             <tbody>
