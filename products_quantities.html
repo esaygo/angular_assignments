@@ -31,6 +31,23 @@
               // Pass the students to a callback to be used by whoever calls the method
               callback(products);
           }
+          factory.addProduct = function(newProduct){
+            newProduct.quantity = 50;
+            console.log('new product in the factory', newProduct);
+            products.push(newProduct);
+            return products;
+          }
+          factory.deleteProduct = function(product) {
+            products.splice(products.indexOf(product), 1);
+            return products;
+          }
+          factory.buyProduct = function(product) {
+            index = products.indexOf(product);
+            if(products[index].quantity > 0) {
+               products[index].quantity -= 1;
+            }
+              return products[index].quantity;
+          }
           // Most important step: return the object so it can be used by the rest of our angular code
           return factory;
         });
@@ -46,13 +63,16 @@
           $scope.addProduct = function() {
             console.log('new added product', $scope.newProduct);
             console.log($scope.products);
-            $scope.newProduct.quantity = 50;
-            $scope.products.push($scope.newProduct);
+            // $scope.newProduct.quantity = 50;
+            // $scope.products.push($scope.newProduct);
+            // $scope.newProduct = {};
+            productFactory.addProduct($scope.newProduct);
             $scope.newProduct = {};
           }
           $scope.deleteProduct = function(product) {
-            console.log("product to delete is: ", product);
-            $scope.products.splice($scope.products.indexOf(product), 1);
+            // console.log("product to delete is: ", product);
+            // $scope.products.splice($scope.products.indexOf(product), 1);
+            productFactory.deleteProduct(product);
           }
         });
 
@@ -66,12 +86,14 @@
 
           //console.log("products in orders controller", $scope.products);
           $scope.buyProduct = function(product) {
-            index = $scope.products.indexOf(product);
+            //index = $scope.products.indexOf(product);
             //console.log("product to buy", $scope.products[index].quantity);
-            if($scope.products[index].quantity > 0) {
-                $scope.products[index].quantity -= 1;
-              }
-            return $scope.products[index].quantity;
+            //
+            // if($scope.products[index].quantity > 0) {
+            //     $scope.products[index].quantity -= 1;
+            //   }
+            // return $scope.products[index].quantity;
+            productFactory.buyProduct(product);
           }
 
         });
